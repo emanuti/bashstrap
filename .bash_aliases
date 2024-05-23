@@ -1,4 +1,4 @@
-# "private" functions
+# "internal" functions
 _printRed() {
 	echo -e "\e[1;31m$1\e[0m"
 }
@@ -11,18 +11,25 @@ _printYellow() {
 	echo -e "\e[1;33m$1\e[0m"
 }
 
+_printBlue() {
+	echo -e "\e[1;34m$1\e[0m"
+}
+
+_printNested() {
+	echo -e "\t$1"
+}
+
 # simplifying docker command
 function runtests() {
-  
 	local file_path=""
-  local $container_name='container_name'
-	local container_path="app/tests"
+	local container_name='container_name'
+	local container_path="application/tests"
 	local local_path="$HOME/Projects/$container_path"
 
-	echo 'Provide test file path and filename (it must be enought to diferenciate this to other files):'
+	echo "Provide part of test path/filename: $( _printYellow 'it should be enough to differentiate this from other files')"
 	read file
 
-	echo 'Which type of test do you want to run? (Unit/integration, nonintegration)'
+	echo "Which type of test do you want to run? $( _printYellow 'integration, nonintegration or unit' )$( _printGreen '(default)' )"
 	read test_type
 
 	# $test_type is null
@@ -32,10 +39,12 @@ function runtests() {
 
 	# $file is not null
 	if [ ! -z $file ]; then
-		echo -e "\nSearching INTO:\n $local_path"
-		echo -e "Filename:\n $file"
+		_printYellow "\nSearching INTO:"
+		_printNested $local_path
+		_printYellow "Filename:"
+		_printNested "$file\n"
 
-		local result=$(find "$local_path/$test_type" -type f -wholename "*$file*")
+		local result=$(find "$local_path/$test_type" -type f -iwholename "*$file*")
 		local count_files=$(echo "$result" | wc -l)
 
 		# if the result lines of files is greater than 1
@@ -56,15 +65,15 @@ function runtests() {
 		    fi
 
 		    _printGreen "Found:"
-		    echo -e "$result \n"
+		    _printNested "$result \n"
 
 		    # str_replace using shell script result = search, local_path = old_value, container_path = new_value 
-			  local file_path="${result//$local_path/$container_path}"
+			local file_path="${result//$local_path/$container_path}"
 
-	      _printGreen 'Executing:'
-	      echo -e " docker exec $container_name phpunit --bootstrap $container_path/bootstrap.php --configuration $container_path/$test_type/phpunit.xml $file_path \n"
+	        _printGreen 'Executing:'
+	        _printNested "docker exec $container_name phpunit --bootstrap $container_path/bootstrap.php --configuration $container_path/$( _printGreen $test_type )/phpunit.xml $file_path \n"
 	    fi
 	fi
 
-	docker exec $container_name phpunit --bootstrap "$container_path/bootstrap.php" --configuration "bob/application/local/tests/$test_type/phpunit.xml" "$file_path"
+	docker exec $container_name phpunit --bootstrap "$container_path/bootstrap.php" --configuration "$container_path/$test_type/phpunit.xml" "$file_path"
 }
