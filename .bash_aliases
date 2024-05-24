@@ -6,29 +6,28 @@ function runtests() {
 	local file_path=""
 	local container_name='container_name'
 	local container_path="application/tests"
-	local local_path="$HOME/Projects/$container_path"
+	local project_path="$HOME/Projects/jumia_projects/shop/aframz/$container_path"
 
-	echo "Provide part of test path/filename: $( _printYellow 'it should be enough to differentiate this from other files') - $( _printRed '## ENTER to run all tests ##' )" 
+	echo "Provide part of test path/filename: $( _printYellow 'it should be enough to differentiate this from other files') - $( _printGreen '## ENTER to run all tests ##' )" 
 	read file
 
-	echo "Which type of test do you want to run? $( _printYellow 'integration, nonintegration or unit' )$( _printGreen '(default)' )"
-	read test_type
+	echo "These folders were found INTO $project_path:"
+	_printRed 'select one that stores some tests to run'
 
-	# $test_type is null
-	if [ -z $test_type ]; then
-		local test_type='unit'
-	fi
+	# creating an array with the result of find
+	local options=($(find $project_path -mindepth 1 -maxdepth 1 -type d -printf '%f '))
+	local test_type=$( _menu "${options[@]}" )
 
 	_line
 
 	# $file is not null
 	if [ ! -z $file ]; then
 		_printYellow "Searching INTO:"
-		_printNested "$local_path/$( _printGreen $test_type )"
+		_printNested "$project_path/$( _printGreen $test_type )/"
 		_printYellow "Filename:"
 		_printNested "$file"
 
-		local result=$(find "$local_path/$test_type" -type f -iwholename "*$file*" | sed 's/^/\t/')
+		local result=$(find "$project_path/$test_type" -type f -iwholename "*$file*" | sed 's/^/\t/')
 		local count_files=$(echo "$result" | wc -l)
 
 		# if the result lines of files is greater than 1
@@ -49,18 +48,19 @@ function runtests() {
 		        return 1
 		    fi
 
-		    _printGreen "\nFound:"
-		    _printNested "$result \n"
+		    _printGreen "Found:"
+		    echo -e "$result"
 		    _line
 
-		    # str_replace using shell script result = search, local_path = old_value, container_path = new_value 
-			local file_path="${result//$local_path/$container_path}"
+		    # str_replace using shell script result = search, project_path = old_value, container_path = new_value 
+			local file_path="${result//$project_path/$container_path}"
 
 	        _printGreen 'Executing:'
 	        _printNested "docker exec $container_name phpunit --bootstrap $container_path/bootstrap.php --configuration $container_path/$( _printGreen $test_type )/phpunit.xml $file_path \n"
 	    fi
 	else
-		_printRed "Let's run all the tests!🤪"
+		_printRed "Let's run all the $test_type tests!🤪"
+		_printNested "INTO $project_path/$( _printGreen $test_type )"
 	fi
 
 	docker exec $container_name phpunit --bootstrap "$container_path/bootstrap.php" --configuration "$container_path/$test_type/phpunit.xml" "$file_path"
