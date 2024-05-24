@@ -37,3 +37,55 @@ _loading() {
     sleep 0.1
   done
 }
+
+_line() {
+    # get the width cols of window
+    local cols=$(tput cols)
+    # attr 1 will be the string used to fill the line
+    local filler=${1:-'-'}
+    # set the size of line. By default will be the width of window
+    local line_length=${2:-$cols}
+
+    printf '%*s\n' "$line_length" '' | tr ' ' $filler
+}
+
+## how to use it?
+# local options=("1" "2" "3")
+# _in_array "$opt" "${options[@]}"
+#
+_in_array() {
+    local needle="$1"
+    shift
+    local array=("$@")
+    
+    for element in "${array[@]}"; do
+        if [ "$element" == "$needle" ]; then
+            return 0  # Element found
+        fi
+    done
+    
+    return 1  # Element not found
+}
+
+## how to use it?
+# local options=("1" "2" "3")
+# _menu "${options[@]}"
+#
+_menu() {
+  local options=("$@")
+
+  select opt in "${options[@]}"  # Display the select menu
+  do
+    local selectedOption=$opt
+
+    # default option if selected option doesn't exists
+    if ! _in_array "$opt" "${options[@]}"; then
+      local selectedOption=${options[0]}
+    fi
+
+    break
+  done
+
+  # it works like return
+  echo $selectedOption
+}
