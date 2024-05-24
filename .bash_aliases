@@ -6,7 +6,7 @@ function runtests() {
 	local file_path=""
 	local container_name='container_name'
 	local container_path="application/tests"
-	local project_path="$HOME/Projects/jumia_projects/shop/aframz/$container_path"
+	local project_path="$HOME/Projects/$container_path"
 
 	echo "Provide part of test path/filename: $( _printYellow 'it should be enough to differentiate this from other files') - $( _printGreen '## ENTER to run all tests ##' )" 
 	read file
