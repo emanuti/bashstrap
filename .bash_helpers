@@ -56,12 +56,12 @@ _line() {
 _in_array() {
     local needle="$1"
     shift
-    local array=("$@")
+    local -a array=("$@")
     
     for element in "${array[@]}"; do
-        if [ "$element" == "$needle" ]; then
-            return 0  # Element found
-        fi
+      if [ "$element" == "$needle" ]; then
+        return 0  # Element found
+      fi
     done
     
     return 1  # Element not found
@@ -72,7 +72,7 @@ _in_array() {
 # _menu "${options[@]}"
 #
 _menu() {
-  local options=("$@")
+  local -a options=("$@")
 
   select opt in "${options[@]}"  # Display the select menu
   do
