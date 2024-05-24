@@ -1,4 +1,5 @@
-source $HOME/.bash_helpers
+# importing helpers
+. ~/.bash_helpers
 
 # simplifying docker command
 function runtests() {
