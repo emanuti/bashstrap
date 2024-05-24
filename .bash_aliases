@@ -1,23 +1,4 @@
-# "internal" functions
-_printRed() {
-	echo -e "\e[1;31m$1\e[0m"
-}
-
-_printGreen() {
-	echo -e "\e[1;32m$1\e[0m"
-}
-
-_printYellow() {
-	echo -e "\e[1;33m$1\e[0m"
-}
-
-_printBlue() {
-	echo -e "\e[1;34m$1\e[0m"
-}
-
-_printNested() {
-	echo -e "\t$1"
-}
+source $HOME/.bash_helpers
 
 # simplifying docker command
 function runtests() {
