@@ -1,14 +1,14 @@
 # importing helpers
 . ~/.bash_helpers
 
-# simplifying docker command
+# simplifying docker command to run tests into a Zend 1 project
 function runtests() {
 	local file_path=""
 	local container_name='container_name'
 	local container_path="application/tests"
 	local local_path="$HOME/Projects/$container_path"
 
-	echo "Provide part of test path/filename: $( _printYellow 'it should be enough to differentiate this from other files')"
+	echo "Provide part of test path/filename: $( _printYellow 'it should be enough to differentiate this from other files') - $( _printRed '## ENTER to run all tests ##' )" 
 	read file
 
 	echo "Which type of test do you want to run? $( _printYellow 'integration, nonintegration or unit' )$( _printGreen '(default)' )"
@@ -19,20 +19,23 @@ function runtests() {
 		local test_type='unit'
 	fi
 
+	_line
+
 	# $file is not null
 	if [ ! -z $file ]; then
-		_printYellow "\nSearching INTO:"
-		_printNested $local_path
+		_printYellow "Searching INTO:"
+		_printNested "$local_path/$( _printGreen $test_type )"
 		_printYellow "Filename:"
-		_printNested "$file\n"
+		_printNested "$file"
 
-		local result=$(find "$local_path/$test_type" -type f -iwholename "*$file*")
+		local result=$(find "$local_path/$test_type" -type f -iwholename "*$file*" | sed 's/^/\t/')
 		local count_files=$(echo "$result" | wc -l)
 
 		# if the result lines of files is greater than 1
 	    if [ "$count_files" -gt 1 ]; then
-	        echo -e "Found file(s):\n $result"
-	        _printYellow "Please provide a more specific filename."
+	        _printYellow "Found file(s):"
+	        echo -e "$result"
+	        _printRed "\nPlease, provide a more specific filename."
 
 	        return 1
 	    fi
@@ -46,8 +49,9 @@ function runtests() {
 		        return 1
 		    fi
 
-		    _printGreen "Found:"
+		    _printGreen "\nFound:"
 		    _printNested "$result \n"
+		    _line
 
 		    # str_replace using shell script result = search, local_path = old_value, container_path = new_value 
 			local file_path="${result//$local_path/$container_path}"
@@ -55,6 +59,8 @@ function runtests() {
 	        _printGreen 'Executing:'
 	        _printNested "docker exec $container_name phpunit --bootstrap $container_path/bootstrap.php --configuration $container_path/$( _printGreen $test_type )/phpunit.xml $file_path \n"
 	    fi
+	else
+		_printRed "Let's run all the tests!🤪"
 	fi
 
 	docker exec $container_name phpunit --bootstrap "$container_path/bootstrap.php" --configuration "$container_path/$test_type/phpunit.xml" "$file_path"
