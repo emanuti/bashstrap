@@ -1,5 +1,8 @@
-# importing helpers
-. ~/.bash_helpers
+# importing files
+. ~/text/.main
+. ~/array/.main
+. ~/menu/.main
+. ~/.helpers
 
 # simplifying docker command to run tests into a Zend 1 project
 function runtests() {

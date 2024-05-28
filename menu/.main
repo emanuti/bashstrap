@@ -1,0 +1,23 @@
+## how to
+# - firstly you must define the array
+# local options=("1" "2" "3")
+# _menu "${options[@]}"
+#
+_menu() {
+  local -a options=("$@")
+
+  select opt in "${options[@]}"  # Display the select menu
+  do
+    local selectedOption=$opt
+
+    # default option if selected option doesn't exists
+    if ! _in_array "$opt" "${options[@]}"; then
+      local selectedOption=${options[0]}
+    fi
+
+    break
+  done
+
+  # it works like return
+  echo $selectedOption
+}

@@ -1,0 +1,27 @@
+
+# importing helpers
+. ~/text/.main
+
+_loading() {
+  local message="$1"
+  local -a frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+  local frame_count=${#frames[@]}
+  local i=0
+
+  while true; do
+    printf "\r%s %s" "$message" "${frames[i]}"
+    ((i = (i + 1) % frame_count))
+    sleep 0.1
+  done
+}
+
+_line() {
+    # get the width cols of window
+    local cols=$(tput cols)
+    # attr 1 will be the string used to fill the line
+    local filler=${1:-'-'}
+    # set the size of line. By default will be the width of window
+    local line_length=${2:-$cols}
+
+    printf '%*s\n' "$line_length" '' | tr ' ' $filler
+}

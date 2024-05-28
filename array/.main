@@ -1,0 +1,18 @@
+## How to
+# - firstly you must define the array
+# local options=("1" "2" "3")
+# _in_array "$opt" "${options[@]}"
+#
+_in_array() {
+    local needle="$1"
+    shift
+    local -a array=("$@")
+    
+    for element in "${array[@]}"; do
+      if [ "$element" == "$needle" ]; then
+        return 0  # Element found
+      fi
+    done
+    
+    return 1  # Element not found
+}
