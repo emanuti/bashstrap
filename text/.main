@@ -1,6 +1,8 @@
+
 _ansi_color() {
-    local color="$1"
-    local style="${2:-bold}"
+    local text="$1"
+    local color="$2"
+    local style="${3:-bold}"
     
     case $color in
         black)   color_code=30;;
@@ -25,29 +27,33 @@ _ansi_color() {
         *)       style_code=0;; # Default to normal
     esac
     
-    echo -n "\e[${style_code};${color_code}m"
+    echo -e "\e[${style_code};${color_code}m${text}\e[0m"
+}
+
+_printBlack() {
+    _ansi_color "$1" black
 }
 
 _printBlue() {
-    _ansi_color blue
-    echo -e "$1\e[0m"
+    _ansi_color "$1" blue
 }
 
 _printGreen() {
-	_ansi_color green
-    echo -e "$1\e[0m"
+	_ansi_color "$1" green
+}
+
+_printMagenta() {
+	_ansi_color "$1" magenta
 }
 
 _printRed() {
-	_ansi_color red
-    echo -e "$1\e[0m"
+	_ansi_color "$1" red
 }
 
 _printYellow() {
-	_ansi_color yellow 
-    echo -e "$1\e[0m"
+	_ansi_color "$1" yellow
 }
 
 _printNested() {
-	echo -e "\t$1"
+	echo -e "\t"$1""
 }

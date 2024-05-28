@@ -1,8 +1,8 @@
 # importing files
-. ~/text/.main
-. ~/array/.main
-. ~/menu/.main
-. ~/.helpers
+. ~/.bashstrap/text/.main
+. ~/.bashstrap/array/.main
+. ~/.bashstrap/menu/.main
+. ~/.bashstrap/.helpers
 
 # simplifying docker command to run tests into a Zend 1 project
 function runtests() {

@@ -1,7 +1,3 @@
-
-# importing helpers
-. ~/text/.main
-
 _loading() {
   local message="$1"
   local -a frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
