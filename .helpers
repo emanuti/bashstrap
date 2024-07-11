@@ -21,3 +21,7 @@ _line() {
 
     printf '%*s\n' "$line_length" '' | tr ' ' $filler
 }
+
+_br() {
+  echo -e "\n"
+}
